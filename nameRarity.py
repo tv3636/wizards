@@ -21,6 +21,7 @@ titles = ['The Great', 'the Bearded', 'The Wizard Empress', 'The Great and Magic
 possibleFiller = ['out of the', 'of the', 'of ', 'in the', 'from the']
 ignore = ['filler']
 categories = list(set(counts.keys()) - set(ignore))
+base_url = 'https://opensea.io/assets/0x521f9c7505005cfa19a8e5786a9c3c9c9f5e6f42/'
 
 def getName(remaining):
 	for fillerWords in possibleFiller:
@@ -74,7 +75,7 @@ def splitName(fullName):
 
 def writeNameRarity(outputFile='nameRarity.csv', rarityScores=None):
 	with open(outputFile, 'w') as csvfile:
-		writer = csv.DictWriter(csvfile, fieldnames=['name', 'serial', 'title', 'title score', 'firstName', 'name score', 'location', 'location score', 'length score', 'combo score', 'total score']) 
+		writer = csv.DictWriter(csvfile, fieldnames=['name', 'serial', 'link', 'title', 'title score', 'firstName', 'name score', 'location', 'location score', 'length score', 'combo score', 'total score']) 
 		writer.writeheader()
 
 		for row in sorted(rarityScores, key=lambda x: x['total'], reverse=True):
@@ -84,6 +85,7 @@ def writeNameRarity(outputFile='nameRarity.csv', rarityScores=None):
 			row['name'] = elements[int(row['serial'])]['name'].strip()
 			row['title'] = row['titleValue']
 			row['location'] = row['locationValue']
+			row['link'] = base_url + row['serial']
 			del row['titleValue']
 			del row['locationValue']
 			del row['length']
