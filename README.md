@@ -33,7 +33,7 @@ Next, base scores for each trait are divided by the average base score for that 
 
 To provide an appropriate weight for each category, scores are multipled by the average _value_ in that category divided by the wizard's value in that category. The average `name` occurs 17.6 times across the collection, so a name that occurs only once is 17.6x more rare than average, and receives that weight.
 
-Finally, a wizard's score for each category (`title score`, `name score`, `origin score`, and `combo score`) is summed up to its `total`. You can view the current ranking [here](nameRarity.csv)
+Finally, a wizard's score for each category (`title score`, `name score`, `origin score`, and `combo score`) is summed up to its `total`. You can view the current ranking [here](rarity.csv)
 
 
 ### Disclaimer
