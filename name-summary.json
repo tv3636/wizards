@@ -1,12 +1,12 @@
 {
     "combo": {
-        "{'origin': True, 'prepositions': True, 'name': True, 'title': True}": 9128,
-        "{'origin': True, 'prepositions': True, 'name': True, 'title': False}": 534,
-        "{'origin': False, 'prepositions': False, 'name': True, 'title': True}": 222,
-        "{'origin': True, 'prepositions': True, 'name': False, 'title': True}": 78,
-        "{'origin': False, 'prepositions': False, 'name': True, 'title': False}": 19,
-        "{'origin': False, 'prepositions': False, 'name': False, 'title': True}": 11,
-        "{'origin': True, 'prepositions': True, 'name': False, 'title': False}": 8
+        "{'title': True, 'name': True, 'prepositions': True, 'origin': True}": 9128,
+        "{'title': False, 'name': True, 'prepositions': True, 'origin': True}": 534,
+        "{'title': True, 'name': True, 'prepositions': False, 'origin': False}": 222,
+        "{'title': True, 'name': False, 'prepositions': True, 'origin': True}": 78,
+        "{'title': False, 'name': True, 'prepositions': False, 'origin': False}": 19,
+        "{'title': True, 'name': False, 'prepositions': False, 'origin': False}": 11,
+        "{'title': False, 'name': False, 'prepositions': True, 'origin': True}": 8
     },
     "title": {
         "Archmagus": 1083,
