@@ -147,4 +147,4 @@ def calculateNameRarity(inputFile='wizards.csv'):
 	return rarityScores
 
 
-writeNameRarity(outputFile='nameRarity.csv', rarityScores=calculateNameRarity())
+writeNameRarity(outputFile='rarity.csv', rarityScores=calculateNameRarity())
