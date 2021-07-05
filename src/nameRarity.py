@@ -1,27 +1,21 @@
 from collections import defaultdict, OrderedDict
 import csv, statistics, json
 
-nameLengthCounts = defaultdict(int)
-locationCounts = defaultdict(int)
-titleCounts = defaultdict(int)
-nameCounts = defaultdict(int)
-fillerCounts = defaultdict(int)
 elements = []
-
 counts = {
-	'length': defaultdict(int),
-	'location': defaultdict(int),
+	'origin': defaultdict(int),
 	'title': defaultdict(int),
 	'name': defaultdict(int),
-	'filler': defaultdict(int), 
+	'prepositions': defaultdict(int), 
 	'combo': defaultdict(int)
 }
 
-titles = ['The Great', 'the Bearded', 'The Wizard Empress', 'The Great and Magical', 'The Red Witch', 'The Color Master', 'The Goblin King', 'The Grey Pilgrim', 'The Bird Tamer', 'The Darkness Slayer', 'The East Helper', 'The Witch', 'Holy Magus', 'Holy Arcanist', 'Alien Arcanist', 'Summoner', 'Evoker', 'Runecaster', 'Archmagus', 'Voodoo Priest', 'Solar Mage', 'Sacred Key', 'Holy Monk', 'Stellar Mage', 'Light Mage', 'Transmuter', 'Conjurer', 'Bunny Wizard', 'Prismatic Magi', 'Master Ape', 'Thaumaturge', 'Rogue Mage', 'Sorcerer', 'Cleric', 'Aeromancer', 'Ghost Eater', 'Supa Wizz', 'Void Disciple', 'Illusionist', 'Druid', 'Fortune Teller', 'Adept', 'Battle Mage', 'Witch', 'Shaman', 'Ice Mage', 'Wild Mage', 'Clairvoyant', 'Shadow Mage', 'Hex Mage', 'Chaos Mage', 'Chronomancer', 'Colormancer', 'Diabolist', 'Wise', 'Artificer', 'Sky Master', 'Hydromancer', 'Electromancer', 'Battlemage', 'Geomancer', 'Headless', 'Null Mage', 'Loop Master', 'Hedge Wizard', 'Charmer', 'Oracle', 'Cartomancer', 'Enchanter', 'Crow Master Claire', 'Augurer', 'Ghost Eater', '3D Wizz', 'Mystic', 'Necromancer', 'Arch-Magician', 'Sage', 'Cosmic Mage', 'Evil Arcanist', 'Great Old One', 'Cryptomancer', 'Medium', 'Scryer', 'Cat Wizard El Crypto', 'Bard', 'Punk Rock Arcanist', 'Edge Arcanist', 'Lunar Mage', 'Fortune Master', 'Wizard', 'Arcanist', 'Magus', 'Alchemist', 'Old', 'Diviner', 'Spellsinger', 'Vampyre', 'Pyromancer']
-possibleFiller = ['out of the', 'of the', 'of ', 'in the', 'from the']
-ignore = ['filler']
-categories = list(set(counts.keys()) - set(ignore))
 base_url = 'https://opensea.io/assets/0x521f9c7505005cfa19a8e5786a9c3c9c9f5e6f42/'
+titles = ['The Great and Magical', 'The Great', 'the Bearded', 'The Wizard Empress', 'The Red Witch', 'The Color Master', 'The Goblin King', 'The Grey Pilgrim', 'The Bird Tamer', 'The Darkness Slayer', 'The East Helper', 'The Witch', 'Holy Magus', 'Holy Arcanist', 'Alien Arcanist', 'Summoner', 'Evoker', 'Runecaster', 'Archmagus', 'Voodoo Priest', 'Solar Mage', 'Sacred Key Master', 'Holy Monk', 'Stellar Mage', 'Light Mage', 'Transmuter', 'Conjurer', 'Bunny Wizard', 'Prismatic Magi', 'Master Ape', 'Thaumaturge', 'Rogue Mage', 'Sorcerer', 'Cleric', 'Aeromancer', 'Ghost Eater', 'Supa Wizz', 'Void Disciple', 'Illusionist', 'Druid', 'Fortune Teller', 'Adept', 'Battle Mage', 'Witch', 'Shaman', 'Ice Mage', 'Wild Mage', 'Clairvoyant', 'Shadow Mage', 'Hex Mage', 'Chaos Mage', 'Chronomancer', 'Colormancer', 'Diabolist', 'Wise', 'Artificer', 'Sky Master', 'Hydromancer', 'Electromancer', 'Battlemage', 'Geomancer', 'Headless', 'Null Mage', 'Loop Master', 'Hedge Wizard', 'Charmer', 'Oracle', 'Cartomancer', 'Enchanter', 'Crow Master Claire', 'Augurer', 'Ghost Eater', '3D Wizz', 'Mystic', 'Necromancer', 'Arch-Magician', 'Sage', 'Cosmic Mage', 'Evil Arcanist', 'Great Old One', 'Cryptomancer', 'Medium', 'Scryer', 'Cat Wizard El Crypto', 'Bard', 'Punk Rock Arcanist', 'Edge Arcanist', 'Lunar Mage', 'Fortune Master', 'Wizard', 'Arcanist', 'Magus', 'Alchemist', 'Old', 'Diviner', 'Spellsinger', 'Vampyre', 'Pyromancer']
+possibleFiller = ['out of the', 'of the', 'of ', 'in the', 'from the']
+
+ignore = ['prepositions']
+categories = list(set(counts.keys()) - set(ignore))
 
 def getName(remaining):
 	for fillerWords in possibleFiller:
@@ -31,9 +25,9 @@ def getName(remaining):
 
 	return remaining.strip()
 
-def validate(title, name, filler, location, fullName):
-	titleName = ' '.join((title,name,filler,location)).strip().replace('  ', ' ')
-	nameTitle = ' '.join((name,title,filler,location)).strip().replace('  ', ' ')
+def validate(title, name, filler, origin, fullName):
+	titleName = ' '.join((title,name,filler,origin)).strip().replace('  ', ' ')
+	nameTitle = ' '.join((name,title,filler,origin)).strip().replace('  ', ' ')
 	original = fullName.strip().replace('  ', ' ')
 
 	if original not in [titleName, nameTitle]:
@@ -48,14 +42,14 @@ def getCombo(nameDict):
 	return str(thisGrouping)
 
 def splitName(fullName):
-	location = ''
+	origin = ''
 	name = ''
 	title = ''
 	filler = ''
 
 	for fillerWords in possibleFiller:
-		if fillerWords in fullName and not location:
-			location = fullName[fullName.find(fillerWords) + len(fillerWords):].strip()
+		if fillerWords in fullName and not origin:
+			origin = fullName[fullName.find(fillerWords) + len(fillerWords):].strip()
 			filler = fillerWords.strip()
 
 	for possibleTitle in titles:
@@ -66,16 +60,16 @@ def splitName(fullName):
 	if not title:
 		name = getName(fullName)
 
-	validate(title, name, filler, location, fullName)
+	validate(title, name, filler, origin, fullName)
 
-	out = {'length': sum([category != '' for category in [title, name, filler, location]]), 'title': title, 'name': name, 'filler': filler, 'location': location}
+	out = {'title': title, 'name': name, 'prepositions': filler, 'origin': origin}
 	out['combo'] = getCombo(out)
 
 	return out
 
 def writeNameRarity(outputFile='nameRarity.csv', rarityScores=None):
 	with open(outputFile, 'w') as csvfile:
-		writer = csv.DictWriter(csvfile, fieldnames=['name', 'serial', 'link', 'title', 'title score', 'firstName', 'name score', 'location', 'location score', 'length score', 'combo score', 'total score']) 
+		writer = csv.DictWriter(csvfile, fieldnames=['name', 'serial', 'link', 'title', 'title score', 'firstName', 'name score', 'origin', 'origin score', 'combo score', 'total score']) 
 		writer.writeheader()
 
 		for row in sorted(rarityScores, key=lambda x: x['total'], reverse=True):
@@ -84,15 +78,20 @@ def writeNameRarity(outputFile='nameRarity.csv', rarityScores=None):
 
 			row['name'] = elements[int(row['serial'])]['name'].strip()
 			row['title'] = row['titleValue']
-			row['location'] = row['locationValue']
+			row['origin'] = row['originValue']
 			row['link'] = base_url + row['serial']
 			del row['titleValue']
-			del row['locationValue']
-			del row['length']
+			del row['originValue']
 			del row['combo']
 			del row['total']
 
 			writer.writerow(row)
+
+def countJSON():
+	countDict = {}
+	for count in counts:
+		countDict[count] = OrderedDict(sorted(counts[count].items(), key=lambda x: x[1], reverse=True))
+	return json.dumps(countDict)
 
 def calculateNameRarity(inputFile='wizards.csv'):
 	with open(inputFile) as csvfile:
@@ -111,7 +110,7 @@ def calculateNameRarity(inputFile='wizards.csv'):
 		categoryValues = [counts[category][x] for x in counts[category]]
 		scoreLists[category] = { 
 			'values': [], 
-			'weight': statistics.stdev(categoryValues) / statistics.mean(categoryValues)
+			'avg': statistics.mean(categoryValues)
 		}
 
 	for element in elements:
@@ -128,7 +127,7 @@ def calculateNameRarity(inputFile='wizards.csv'):
 		rarity['serial'] = element['Serial']
 		rarity['titleValue'] = name['title']
 		rarity['firstName'] = name['name']
-		rarity['locationValue'] = name['location']
+		rarity['originValue'] = name['origin']
 		rarityScores.append(rarity)
 
 		for category in categories:
@@ -141,12 +140,11 @@ def calculateNameRarity(inputFile='wizards.csv'):
 	for i in range(len(elements)):
 		for category in categories:
 			rarityScores[i][category] /= scoreLists[category]['avgScore']
-			rarityScores[i][category] *= scoreLists[category]['weight']
+			rarityScores[i][category] *= scoreLists[category]['avg'] / float(counts[category][splitName(elements[i]['name'])[category]])
 
-		rarityScores[i]['total'] = rarityScores[i]['length'] + rarityScores[i]['title'] + rarityScores[i]['name'] + rarityScores[i]['location'] + rarityScores[i]['combo']
+		rarityScores[i]['total'] = sum([rarityScores[i][category] for category in categories])
 
 	return rarityScores
 
 
 writeNameRarity(outputFile='nameRarity.csv', rarityScores=calculateNameRarity())
-
